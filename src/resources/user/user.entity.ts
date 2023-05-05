@@ -1,22 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn, AfterInsert } from "typeorm"
+import {Entity, Column, PrimaryGeneratedColumn, AfterInsert} from "typeorm";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
 
     @Column({
-        nullable: true
+        nullable: true,
     })
-    firstName: string
+    firstName: string;
 
     @Column({
-        nullable: true
+        nullable: true,
     })
-    lastName: string
+    lastName: string;
 
     @Column({
-        unique: true
+        unique: true,
     })
     email: string;
 
