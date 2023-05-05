@@ -1,34 +1,60 @@
+import fs from 'fs';
+import path from 'path';
 import express, { Request, Response, NextFunction } from 'express';
-import { appDataSource } from '../db/data-source';
-import { User } from './models/user.entity';
+import logger from 'morgan';
+import { ErrorResponse } from './utils/response';
+import usersRouter from './resources/user/user.router';
 
-let server;
-const app = express();
-app.get('/', main);
-
-async function main(req: Request, res: Response, next: NextFunction) {
-	try {
-		const userRepo = appDataSource.getRepository(User);
-		const user = userRepo.create({
-			firstName: 'Shouvik',
-			lastName: 'Mandal',
-		});
-		const savedUser = await userRepo.save(user);
-		res.status(201).json({ success: true, data: savedUser });
-		server.close();
-	} catch (err) {
-		console.log(err);
-		server.close();
-        appDataSource.destroy();
-	}
+interface CustomError extends Error {
+	statusCode?: number;
 }
 
-appDataSource
-	.initialize()
-	.then((result) => {
-		server = app.listen(process.env.PORT);
-		console.log('App started listening...');
+const app = express();
+
+const accessLogStream = fs.createWriteStream(
+	path.join(__dirname, '..', 'access.log'),
+	{
+		flags: 'a', // a for append
+	}
+);
+
+app.use(
+	logger('combined', {
+		stream: accessLogStream,
 	})
-	.catch((err) => {
-		console.error(err);
+);
+app.use((req: Request, res: Response, next: NextFunction) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', [
+		'OPTIONS',
+		'GET',
+		'POST',
+		'DELETE',
+		'PATCH',
+		'PUT',
+	]);
+	res.setHeader('Access-Control-Allow-Headers', [
+		'Content-Type',
+		'Authorization',
+	]);
+	next();
+});
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use('/users', usersRouter);
+
+app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
+	ErrorResponse({
+		res,
+		message: err.message,
+		data: err,
+		statusCode: err.statusCode ?? 500,
 	});
+	return {
+		message: err.message,
+		data: err,
+		statusCode: err.statusCode ?? 500,
+	};
+});
+
+export default app;
