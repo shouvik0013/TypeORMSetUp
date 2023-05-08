@@ -6,3 +6,12 @@ export interface IGetUserAuthInfoRequest extends Request {
         email: string;
     }
 }
+
+export interface IGetUserInfoRequest extends Request {
+    user: {
+        id: number;
+        email: string;
+        firstName?: string;
+        lastName?: string;
+    }
+}

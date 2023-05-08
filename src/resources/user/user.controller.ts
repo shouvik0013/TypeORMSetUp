@@ -3,9 +3,9 @@ import {SuccessResponse, ErrorResponse} from "../../utils/response";
 import {create} from "./user.service";
 import {login as loginService} from "./auth.service";
 //* INTERFACES
-import {IGetUserAuthInfoRequest} from "../../interfaces/request.interface";
+import {IGetUserAuthInfoRequest, IGetUserInfoRequest} from "../../interfaces/request.interface";
 //* CUSTOM EXCEPTIONS
-import { InvalidCredentials } from '../../utils/CustomExceptions';
+import {InvalidCredentials} from "../../utils/CustomExceptions";
 
 export const signupUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -48,15 +48,15 @@ export const signupUser = async (req: Request, res: Response, next: NextFunction
 
 export const login = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
     try {
-        console.log('>>>>>>>>>>>>>. user.controller');
-        if(!req.user) {
+        console.log(">>>>>>>>>>>>>. user.controller");
+        if (!req.user) {
             return ErrorResponse({
                 res,
                 data: null,
-                message: 'Not authenticated',
+                message: "Not authenticated",
                 statusCode: 401,
-                success: false
-            })
+                success: false,
+            });
         }
 
         const loginServiceResponse = await loginService(req.user);
@@ -92,8 +92,18 @@ export const login = async (req: IGetUserAuthInfoRequest, res: Response, next: N
     }
 };
 
-
 export const loginFailed = (err: Error, req: Request, res: Response, next: NextFunction) => {
-    const error = new InvalidCredentials('Invalid email or password', 401);
+    const error = new InvalidCredentials("Invalid email or password", 401);
     next(error);
+};
+
+export const getProfile = (req: IGetUserInfoRequest, res: Response, next: NextFunction) => {
+    return SuccessResponse({
+        res,
+        data: req.user,
+        message: 'User info',
+        statusCode: 200,
+        success: true
+    })
+
 }
