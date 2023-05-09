@@ -15,3 +15,7 @@ export interface IGetUserInfoRequest extends Request {
         lastName?: string;
     }
 }
+
+export interface IRequestUserInfo extends Request {
+    userInfo: any;
+}

@@ -3,20 +3,21 @@ import {SuccessResponse, ErrorResponse} from "../../utils/response";
 import {create} from "./user.service";
 import {login as loginService} from "./auth.service";
 //* INTERFACES
-import {IGetUserAuthInfoRequest, IGetUserInfoRequest} from "../../interfaces/request.interface";
+import {IGetUserAuthInfoRequest, IGetUserInfoRequest, IRequestUserInfo} from "../../interfaces/request.interface";
 //* CUSTOM EXCEPTIONS
 import {InvalidCredentials} from "../../utils/CustomExceptions";
 
-export const signupUser = async (req: Request, res: Response, next: NextFunction) => {
+export const signupUser = async (req: IRequestUserInfo, res: Response, next: NextFunction) => {
     try {
-        const dummyUser = {
-            firstName: "Shouvik",
-            lastName: "Mandal",
-            email: "test1@gmail.com",
-            password: "password@123",
-        };
+        const userInfo = req.userInfo;
+        // const dummyUser = {
+        //     firstName: "Shouvik",
+        //     lastName: "Mandal",
+        //     email: "test1@gmail.com",
+        //     password: "password@123",
+        // };
 
-        const serviceResponse = await create(dummyUser);
+        const serviceResponse = await create(userInfo);
 
         if (!serviceResponse.success) {
             return ErrorResponse({
@@ -101,9 +102,8 @@ export const getProfile = (req: IGetUserInfoRequest, res: Response, next: NextFu
     return SuccessResponse({
         res,
         data: req.user,
-        message: 'User info',
+        message: "User info",
         statusCode: 200,
-        success: true
-    })
-
-}
+        success: true,
+    });
+};
