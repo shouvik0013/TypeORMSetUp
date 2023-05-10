@@ -22,7 +22,7 @@ export const create = async (userInfo: Partial<User>) => {
             email: userInfo.email,
             password: hashedPassword,
         });
-        const savedUser = await userRepo.save(user);
+        const {password, ...savedUser} = await userRepo.save(user);
 
         return SuccessServiceResponse(savedUser, "New user saved into db", true);
     } catch (error) {

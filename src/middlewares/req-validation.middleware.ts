@@ -50,7 +50,7 @@ export const userInfoValidationMiddleware = async (req: IRequestUserInfo, res: R
         
     } catch (error) {
         console.log('******** Validation error at req-validation.middleware', error);
-        error.statusCode = 401;
+        error.statusCode = 400;
         next(error);
     }
 }
