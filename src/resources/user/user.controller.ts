@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {SuccessResponse, ErrorResponse} from "../../utils/response";
 import {create} from "./user.service";
-import {login as loginService} from "./auth.service";
+import {login as loginService} from "../auth/auth.service";
 //* INTERFACES
 import {IGetUserAuthInfoRequest, IGetUserInfoRequest, IRequestUserInfo} from "../../interfaces/request.interface";
 //* CUSTOM EXCEPTIONS

@@ -1,15 +1,15 @@
 import {scrypt as _scrypt, randomBytes} from "crypto";
 import {promisify} from "util";
-import {User} from "./user.entity";
+import {User} from "../user/user.entity";
 import {SuccessServiceResponse, ErrorServiceResponse} from "../../utils/service-response";
-import {findUserByEmail, findUserById} from "./user.service";
+import {findUserByEmail, findUserById} from "../user/user.service";
 //* INTERFACES
 import {JwtPayload} from '../../interfaces/payload.interface';
 import * as jwt from "jsonwebtoken";
 
 const scrypt = promisify(_scrypt);
 
-export async function validateUser(email: string, password: string) {
+export async function validateAndReturnUser(email: string, password: string) {
     try {
         console.log(">>>>>>>>>>>>>validateUser function");
         const response = await findUserByEmail(email);

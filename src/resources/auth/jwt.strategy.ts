@@ -24,4 +24,6 @@ passport.use(
     }), 
 );
 
+export const JwtAuthGuard = passport.authenticate("jwt", {session: false, failWithError: true});
+
 export default passport;
