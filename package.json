@@ -9,8 +9,8 @@
     "start:test": "dotenv -e env/.env.development nodemon build app.js",
     "typeorm": "typeorm-ts-node-commonjs -d ./db/data-source.ts",
     "migration:generate": "dotenv -e env/.env.development npm run typeorm migration:generate",
-    "migration:rundev": "dotenv -e env/.env.development npm run typeorm migration:run",
-    "migration:runtest": "dotenv -e env/.env.test npm run typeorm migration:run"
+    "migration:dev": "dotenv -e env/.env.development npm run typeorm migration:run",
+    "migration:test": "dotenv -e env/.env.test npm run typeorm migration:run"
   },
   "keywords": [],
   "author": "",

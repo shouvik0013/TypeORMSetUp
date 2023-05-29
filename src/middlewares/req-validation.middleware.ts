@@ -1,10 +1,9 @@
 import Joi from "joi";
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction} from "express";
 import {appDataSource} from "../../db/data-source";
 import {User} from "../resources/user/user.entity";
 //* INTERFACES
-import {IRequestUserInfo} from '../interfaces/request.interface';
-
+import {IRequestUserInfo} from "../interfaces/request.interface";
 
 const userRepository = appDataSource.getRepository(User);
 
@@ -41,16 +40,15 @@ export const userInfoValidationMiddleware = async (req: IRequestUserInfo, res: R
             firstName: reqBody.firstName,
             lastName: reqBody?.lastName,
             email: reqBody.email,
-            password: reqBody.password
-        }
+            password: reqBody.password,
+        };
 
         req.userInfo = userInfo;
-        
+
         next();
-        
     } catch (error) {
-        console.log('******** Validation error at req-validation.middleware', error);
+        console.log("******** Validation error at req-validation.middleware", error);
         error.statusCode = 400;
         next(error);
     }
-}
+};

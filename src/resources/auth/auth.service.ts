@@ -4,7 +4,7 @@ import {User} from "../user/user.entity";
 import {SuccessServiceResponse, ErrorServiceResponse} from "../../utils/service-response";
 import {findUserByEmail, findUserById} from "../user/user.service";
 //* INTERFACES
-import {JwtPayload} from '../../interfaces/payload.interface';
+import {JwtPayload} from "../../interfaces/payload.interface";
 import * as jwt from "jsonwebtoken";
 
 const scrypt = promisify(_scrypt);
@@ -40,11 +40,11 @@ export async function validateAndReturnUser(email: string, password: string) {
 export const login = async (user: {id: number; email: string}) => {
     try {
         const payload: JwtPayload = {id: user.id, email: user.email};
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {algorithm: "HS256"});
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: "1h"});
         return SuccessServiceResponse(token, "Token generated", true);
     } catch (error) {
-        console.log('>>>>>>>>>>>>>>>TOKEN GENERATION FAILED', error);
-        console.log('\n\nEND OF ERROR');
+        console.log(">>>>>>>>>>>>>>>TOKEN GENERATION FAILED", error);
+        console.log("\n\nEND OF ERROR");
         return ErrorServiceResponse(null, "Token could not be generated", false);
     }
 };

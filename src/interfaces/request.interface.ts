@@ -19,3 +19,17 @@ export interface IGetUserInfoRequest extends Request {
 export interface IRequestUserInfo extends Request {
     userInfo: any;
 }
+
+export interface IRequestExpenseInfo extends Request {
+    body: {
+        title?: string,
+        amount?: number,
+        expense_date?: Date
+    },
+    user: {
+        id: number;
+        email: string;
+        firstName?: string;
+        lastName?: string;
+    }
+}

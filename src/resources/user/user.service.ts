@@ -1,11 +1,10 @@
 import {promisify} from "util";
 import {scrypt as _scrypt, randomBytes} from "crypto";
-import {appDataSource} from "../../../db/data-source";
 import {User} from "./user.entity";
+import {usersRepository} from './user.repo';
 import {SuccessServiceResponse, ErrorServiceResponse} from "../../utils/service-response";
 
 const scrypt = promisify(_scrypt);
-const userRepo = appDataSource.getRepository(User);
 
 export const create = async (userInfo: Partial<User>) => {
     try {
@@ -16,13 +15,13 @@ export const create = async (userInfo: Partial<User>) => {
         const hash = (await scrypt(userInfo.password, salt, 32)) as Buffer;
         const hashedPassword = salt + "." + hash.toString("hex");
 
-        const user = userRepo.create({
+        const user = usersRepository.create({
             firstName: userInfo.firstName,
             lastName: userInfo.lastName,
             email: userInfo.email,
             password: hashedPassword,
         });
-        const {password, ...savedUser} = await userRepo.save(user);
+        const {password, ...savedUser} = await usersRepository.save(user);
 
         return SuccessServiceResponse(savedUser, "New user saved into db", true);
     } catch (error) {
@@ -32,7 +31,7 @@ export const create = async (userInfo: Partial<User>) => {
 
 export const findUserById = async (id: number) => {
     try {
-        const user = await userRepo.findOne({
+        const user = await usersRepository.findOne({
             where: {
                 id: id,
             },
@@ -52,7 +51,7 @@ export const findUserById = async (id: number) => {
 
 export const findUserByEmail = async (email: string) => {
     try {
-        const user = await userRepo.findOneBy({email: email});
+        const user = await usersRepository.findOneBy({email: email});
 
         //* If not found
         if (!user) {
@@ -68,14 +67,14 @@ export const findUserByEmail = async (email: string) => {
 
 export const removeById = async (id: number) => {
     try {
-        const user = await userRepo.findOneBy({id: id});
+        const user = await usersRepository.findOneBy({id: id});
         if (!user) {
             const error = new Error("User with given ID not found.");
             return ErrorServiceResponse(error, error.message, false);
         }
 
         //! DELETING user from database
-        const deletionResult = await userRepo.remove(user);
+        const deletionResult = await usersRepository.remove(user);
         return SuccessServiceResponse(deletionResult, "user deleted", true);
     } catch (error) {
         return ErrorServiceResponse(error, error.message, false);

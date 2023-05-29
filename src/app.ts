@@ -4,6 +4,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import logger from 'morgan';
 import { ErrorResponse } from './utils/response';
 import usersRouter from './resources/user/user.router';
+import expensesRouter from './resources/expenses/expense.router';
 
 interface CustomError extends Error {
 	statusCode?: number;
@@ -41,7 +42,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+//! ROUTES
 app.use('/users', usersRouter);
+app.use('/expenses', expensesRouter);
 
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) => {
 	ErrorResponse({
