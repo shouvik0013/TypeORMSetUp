@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import {IGetUserInfoRequest, IRequestExpenseInfo} from "../../interfaces/request.interface";
 import {SuccessResponse, ErrorResponse} from "../../utils/response";
-import {createNewExpense, getUserExpenses as getExpenses} from "./expense.service";
+import {createNewExpense, getUserExpenses as getExpenses, getExpenseById, deleteExpenseById as removeExpenseById} from "./expense.service";
 
 export const createExpense = async (req: IRequestExpenseInfo, res: Response, next: NextFunction) => {
     try {
@@ -62,3 +62,52 @@ export const getUserExpenses = async (req: IGetUserInfoRequest, res: Response, n
         });
     }
 };
+
+
+export const deleteExpenseById = async (req: IGetUserInfoRequest, res: Response, next: NextFunction) => {
+    try {
+        //TODO: Get the id from url
+        const expenseId = +req.params['id'];
+        //TODO: Fetch the expense with 'id' from database
+        const expenseResponse = await getExpenseById(expenseId);
+
+        //TODO: If no expense found send error response
+        if(!expenseResponse.success) {
+            return ErrorResponse({
+                res,
+                data: null,
+                message: 'No expense found with given id',
+                statusCode: 401,
+                success: false
+            })
+        }
+
+        //TODO: If the id of the current loggedin user doesn't match with fetched expenses's userId then don't delete the expense and send error response
+        if(req.user.id.toString() !== expenseResponse.data.user.id.toString()) {
+            return ErrorResponse({
+                res,
+                data: null,
+                message: 'No permission to delete'
+            })
+        }
+
+        //TODO: Delete the expense
+        const deleteResponse =  await removeExpenseById(expenseId);
+
+        return SuccessResponse({
+            res,
+            data: deleteResponse.data,
+            message: deleteResponse.message
+        })
+
+
+    } catch (error) {
+        return ErrorResponse({
+            res,
+            data: error,
+            message: error.message,
+            statusCode: 500,
+            success: false,
+        });
+    }
+}

@@ -5,6 +5,7 @@ import {usersRepository} from "../user/user.repo";
 import {User} from "../user/user.entity";
 import {ErrorServiceResponse, SuccessServiceResponse} from "../../utils/service-response";
 
+
 export const createNewExpense = async (userId: number, title: string, amount: number, expense_date: Date) => {
     try {
         const expense = expensesRepository.create({
@@ -47,3 +48,48 @@ export const getUserExpenses = async (userId: number) => {
         return ErrorServiceResponse(error, error.message, false);
     }
 };
+
+export const getExpenseById = async (id: number) => {
+    try {
+        const expense = await expensesRepository
+            .createQueryBuilder("expense")
+            .leftJoin("expense.user", "user")
+            .addSelect(["user.id", "user.email"])
+            .where("expense.id=:id ", {id})
+            .getOne();
+
+        console.log("^^^^^^^ Expense with id: ", expense);
+
+        if (!expense) {
+            return ErrorServiceResponse(null, "Expense with id not found", false);
+        }
+
+        return SuccessServiceResponse(expense, "Expense retrieved", true);
+    } catch (error) {
+        console.log(error);
+
+        return ErrorServiceResponse(error, error.message, false);
+    }
+};
+
+export const deleteExpenseById = async (id: number) => {
+    try {
+        const response = await expensesRepository.delete({
+            id
+        });
+
+        console.log(response);
+
+        if(response.affected < 1) {
+            return ErrorServiceResponse(null, 'Deletion not successfull', false)
+        } 
+
+
+
+        return SuccessServiceResponse(null, 'deleted', true)
+    } catch (error) {
+        console.log(error);
+
+        return ErrorServiceResponse(error, error.message, false);
+    }
+}
